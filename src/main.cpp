@@ -55,18 +55,6 @@ int main() {
             pieces.push_back(currentPiece);
         }
 
-        if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-            currentPiece->rotate(pieces, windowInfo);
-        }
-
-
-        if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-            currentPiece->move({-1, 0}, pieces, windowInfo);
-        }
-
-        if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-            currentPiece->move({1, 0}, pieces, windowInfo);
-        }
     });
 
     int tick = 0;
@@ -74,6 +62,25 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+        // if press key down
+        if (tick % 5 == 0) {
+            if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+                currentPiece->move({0, 1}, pieces, windowInfo);
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+                currentPiece->move({-1, 0}, pieces, windowInfo);
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+                currentPiece->move({1, 0}, pieces, windowInfo);
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+                currentPiece->rotate(pieces, windowInfo);
+            }
+        }
 
         renderer->updateProjection(&windowInfo);
         bool canUpdate = (tick++ % 50 == 0);

@@ -25,14 +25,14 @@ private:
 
     void setPosition(glm::vec2 direction);
 
-    bool canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo);
+    bool canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, bool isGravity);
 
     bool canRotate(glm::vec3 newPositions[4], PIECE_LIST, WindowInfo &windowInfo);
 
 public:
     Piece(WindowInfo &windowInfo);
 
-    void move(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo);
+    void move(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, bool isGravity = false);
 
     void render(Renderer *renderer);
 

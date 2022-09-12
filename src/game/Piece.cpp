@@ -78,7 +78,6 @@ std::vector<PieceData> defaultPieces = {
 
 Piece::Piece(WindowInfo &windowInfo) : stuck(false) {
     pieceIndex = rand() % defaultPieces.size();
-    pieceIndex = 3;
     this->pieceData = defaultPieces[pieceIndex];
     float playAreaWidth = (float) windowInfo.width / ELEMENT_DIMENSION;
     this->setPosition({playAreaWidth / 2, 0});
@@ -93,14 +92,14 @@ void Piece::setPosition(glm::vec2 direction) {
     pieceData.origin.y += direction.y;
 }
 
-void Piece::move(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo) {
-    if (!canMove(direction, pieces, windowInfo))
+void Piece::move(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, bool isGravity) {
+    if (!canMove(direction, pieces, windowInfo, isGravity))
         return;
 
     setPosition(direction);
 }
 
-bool Piece::canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo) {
+bool Piece::canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, bool isGravity) {
     if (stuck) return false;
 
     const float playFieldHeight = (float) windowInfo.height / ELEMENT_DIMENSION;
@@ -113,10 +112,15 @@ bool Piece::canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo) {
     for (auto &piece: pieces) {
         for (auto &position: piece->pieceData.positions) {
             for (auto &position2: pieceData.positions) {
-                if (piece != this)
-                    if (position.x == position2.x + direction.x && position.y == position2.y + direction.y) {
-                        return false;
+                if (piece == this)
+                    continue;
+
+                if (position.y == position2.y + direction.y && position.x == position2.x + direction.x) {
+                    if (isGravity) {
+                        stuck = true;
                     }
+                    return false;
+                }
             }
         }
     }
@@ -124,7 +128,6 @@ bool Piece::canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo) {
 }
 
 bool Piece::canRotate(glm::vec3 newPositions[4], PIECE_LIST, WindowInfo &windowInfo) {
-
     const float playFieldWidth = (float) windowInfo.width / ELEMENT_DIMENSION;
     const float playFieldHeight = (float) windowInfo.height / ELEMENT_DIMENSION;
 
@@ -193,6 +196,6 @@ void Piece::rotate(PIECE_LIST, WindowInfo &windowInfo) {
 
 void Piece::update(PIECE_LIST, WindowInfo &windowInfo) {
     const glm::vec3 down = glm::vec3(0, 1, 0);
-    move(glm::vec2(0, 1), pieces, windowInfo);
+    move(glm::vec2(0, 1), pieces, windowInfo, true);
 }
 
