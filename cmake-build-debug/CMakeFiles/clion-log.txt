@@ -1,0 +1,7 @@
+/home/peu77/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/222.3739.54/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/peu77/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/222.3739.54/bin/ninja/linux/ninja -G Ninja -S /home/peu77/CLionProjects/Tetris -B /home/peu77/CLionProjects/Tetris/cmake-build-debug
+-- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
+-- Including X11 support
+-- GLM: Version 0.9.9.9
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/peu77/CLionProjects/Tetris/cmake-build-debug
