@@ -12,7 +12,8 @@ std::vector<PieceData> defaultPieces = {
                 glm::vec3(1, 0, 0),
                 glm::vec3(2, 0, 0),
                 glm::vec3(3, 0, 0),
-                {1.5, -0.5, 0}
+                {1.5, -0.5, 0},
+                {0.1411, 1.0,     1.0}
         },
 
         // J
@@ -21,7 +22,8 @@ std::vector<PieceData> defaultPieces = {
                 glm::vec3(0, 1, 0),
                 glm::vec3(1, 1, 0),
                 glm::vec3(2, 1, 0),
-                {1,   1,    0}
+                {1,   1,    0},
+                {0.3529, 0.098,   0.901}
         },
 
         // L
@@ -30,7 +32,8 @@ std::vector<PieceData> defaultPieces = {
                 glm::vec3(0, 1, 0),
                 glm::vec3(1, 1, 0),
                 glm::vec3(2, 1, 0),
-                {1,   1,    0}
+                {1,   1,    0},
+                {0.866,  0.396,   0.125}
         },
 
         // O
@@ -39,7 +42,8 @@ std::vector<PieceData> defaultPieces = {
                 glm::vec3(1, 0, 0),
                 glm::vec3(0, 1, 0),
                 glm::vec3(1, 1, 0),
-                {1.0, 1.0, 1.0}
+                {0.5, 0.5,  0.0},
+                {0.898,  0.949,   0.02745}
         },
         // S
         {
@@ -47,7 +51,8 @@ std::vector<PieceData> defaultPieces = {
                 glm::vec3(2, 0, 0),
                 glm::vec3(0, 1, 0),
                 glm::vec3(1, 1, 0),
-                {1,   1,    0}
+                {1,   1,    0},
+                {0.225,  0.89411, 0.08627}
         },
         // T
         {
@@ -55,7 +60,8 @@ std::vector<PieceData> defaultPieces = {
                 glm::vec3(0, 1, 0),
                 glm::vec3(1, 1, 0),
                 glm::vec3(2, 1, 0),
-                {1,   1,    0}
+                {1,   1,    0},
+                {0.745,  0.0784,  0.9019}
         },
 
         // Z
@@ -64,7 +70,8 @@ std::vector<PieceData> defaultPieces = {
                 glm::vec3(1, 0, 0),
                 glm::vec3(1, 1, 0),
                 glm::vec3(2, 1, 0),
-                {1,   1,    0}
+                {1,   1,    0},
+                {0.807,  0.133,   0.133}
         }
 
 };
@@ -77,26 +84,20 @@ Piece::Piece(WindowInfo &windowInfo) : stuck(false) {
     this->setPosition({playAreaWidth / 2, 0});
 }
 
-void Piece::setPosition(glm::vec2 position) {
-    glm::vec3 newPosition = glm::vec3(position, 0);
-    glm::vec3 offset = newPosition - pieceData.origin;
-    for (int i = 0; i < 4; i++) {
-        pieceData.positions[i] += offset;
-    }
-    pieceData.origin.x = newPosition.x;
-    pieceData.origin.y = newPosition.y;
-}
-
-void Piece::move(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo) {
-    if (!canMove(direction, pieces, windowInfo))
-        return;
-
+void Piece::setPosition(glm::vec2 direction) {
     for (auto &position: pieceData.positions) {
         position.x += direction.x;
         position.y += direction.y;
     }
     pieceData.origin.x += direction.x;
     pieceData.origin.y += direction.y;
+}
+
+void Piece::move(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo) {
+    if (!canMove(direction, pieces, windowInfo))
+        return;
+
+    setPosition(direction);
 }
 
 bool Piece::canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo) {
@@ -153,11 +154,12 @@ bool Piece::canRotate(glm::vec3 newPositions[4], PIECE_LIST, WindowInfo &windowI
 
 void Piece::render(Renderer *renderer) {
     const float halfElementDimension = ELEMENT_DIMENSION / 2.0f;
+    const glm::vec3 color = pieceData.color;
     for (auto &block: this->pieceData.positions) {
         renderer->renderQuad(block.x * ELEMENT_DIMENSION + halfElementDimension,
                              block.y * ELEMENT_DIMENSION + halfElementDimension,
                              ELEMENT_DIMENSION,
-                             ELEMENT_DIMENSION, glm::vec3(0, 1, 0));
+                             ELEMENT_DIMENSION, color);
     }
 
 
@@ -171,10 +173,6 @@ void Piece::render(Renderer *renderer) {
 void Piece::rotate(PIECE_LIST, WindowInfo &windowInfo) {
     glm::vec3 center = pieceData.origin;
     glm::vec3 newPositions[4];
-
-    // block rotate because this is the O Piece
-    if (center.z == 1.0)
-        return;
 
     int index = 0;
     for (auto &block: this->pieceData.positions) {

@@ -14,6 +14,7 @@
 struct PieceData {
     glm::vec3 positions[4];
     glm::vec3 origin;
+    glm::vec3 color;
 };
 
 class Piece {
@@ -22,7 +23,7 @@ private:
     int pieceIndex;
     bool stuck;
 
-    void setPosition(glm::vec2 position);
+    void setPosition(glm::vec2 direction);
 
     bool canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo);
 
