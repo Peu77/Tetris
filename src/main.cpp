@@ -15,6 +15,8 @@ WindowInfo windowInfo;
 Piece *currentPiece;
 std::vector<Piece *> pieces;
 
+std::function<void()> createPiece = nullptr;
+
 int main() {
     GLFWwindow *window;
 
@@ -32,6 +34,7 @@ int main() {
         return -1;
     }
 
+
     // on window resize
     glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window, int width, int height) {
         glViewport(0, 0, width, height);
@@ -46,18 +49,30 @@ int main() {
 
     renderer = new Renderer(&windowInfo);
 
+    createPiece = [&]() {
+        currentPiece = new Piece(windowInfo, createPiece);
+        pieces.push_back(currentPiece);
+    };
+
     glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
 
+        /*
         if (key == GLFW_KEY_H && action == GLFW_PRESS) {
-            currentPiece = new Piece(windowInfo);
-            pieces.push_back(currentPiece);
+            if (createPiece == nullptr) {
+                std::cout << "createPiece is null" << std::endl;
+                return;
+
+                createPiece();
+            }
         }
+         */
 
     });
 
     int tick = 0;
+    createPiece();
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);

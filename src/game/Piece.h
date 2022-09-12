@@ -7,6 +7,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 #include "../render/Renderer.h"
+#include <functional>
 
 #define ELEMENT_DIMENSION 100
 #define PIECE_LIST std::vector<Piece*> &pieces
@@ -23,6 +24,8 @@ private:
     int pieceIndex;
     bool stuck;
 
+    std::function<void()> createPiece;
+
     void setPosition(glm::vec2 direction);
 
     bool canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, bool isGravity);
@@ -30,7 +33,7 @@ private:
     bool canRotate(glm::vec3 newPositions[4], PIECE_LIST, WindowInfo &windowInfo);
 
 public:
-    Piece(WindowInfo &windowInfo);
+    Piece(WindowInfo &windowInfo, std::function<void()> &createPiece);
 
     void move(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, bool isGravity = false);
 

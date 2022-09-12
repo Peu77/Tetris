@@ -3,6 +3,8 @@
 //
 
 #include "Piece.h"
+
+#include <utility>
 #include "glm/ext/matrix_transform.hpp"
 
 std::vector<PieceData> defaultPieces = {
@@ -76,7 +78,8 @@ std::vector<PieceData> defaultPieces = {
 
 };
 
-Piece::Piece(WindowInfo &windowInfo) : stuck(false) {
+Piece::Piece(WindowInfo &windowInfo, std::function<void()> &createPiece) : stuck(false),
+                                                                           createPiece(createPiece) {
     pieceIndex = rand() % defaultPieces.size();
     this->pieceData = defaultPieces[pieceIndex];
     float playAreaWidth = (float) windowInfo.width / ELEMENT_DIMENSION;
@@ -106,6 +109,8 @@ bool Piece::canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, boo
     for (auto &position: pieceData.positions) {
         if (position.y + direction.y > playFieldHeight - 1) {
             stuck = true;
+            createPiece();
+            std::cout << "collide on floor with gravity" << std::endl;
             return false;
         }
     }
@@ -117,6 +122,8 @@ bool Piece::canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, boo
 
                 if (position.y == position2.y + direction.y && position.x == position2.x + direction.x) {
                     if (isGravity) {
+                        createPiece();
+                        std::cout << "collide on piece with gravity" << std::endl;
                         stuck = true;
                     }
                     return false;
