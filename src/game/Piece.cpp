@@ -123,6 +123,7 @@ bool Piece::canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, boo
                 if (position.y == position2.y + direction.y && position.x == position2.x + direction.x) {
                     if (isGravity) {
                         createPiece();
+                        cleanUp(pieces, windowInfo);
                         std::cout << "collide on piece with gravity" << std::endl;
                         stuck = true;
                     }
@@ -162,20 +163,56 @@ bool Piece::canRotate(glm::vec3 newPositions[4], PIECE_LIST, WindowInfo &windowI
     return true;
 }
 
+void Piece::cleanUp(std::vector<Piece *> &pieces, WindowInfo &windowInfo) {
+    float playAreaHeight = (float) windowInfo.height / ELEMENT_DIMENSION;
+    float playAreaWidth = (float) windowInfo.width / ELEMENT_DIMENSION;
+
+    for (int y = 0; y < playAreaHeight; y++) {
+        std::vector<int> toRemove;
+        for (int x = 0; x < playAreaWidth; x++) {
+            for (auto &piece: pieces) {
+                for (auto &position: piece->pieceData.positions) {
+                    if (position.x == x && position.y == y) {
+                        toRemove.push_back(x);
+                        //   std::cout << "found at " << x << " " << y << " count: " << toRemove.size() << std::endl;
+
+                    }
+                }
+            }
+
+            if (toRemove.size() >= 10) {
+                std::cout << "found row" << std::endl;
+                for (const auto &xToRemove: toRemove)
+                    for (auto &piece: pieces) {
+                        for (auto &position: piece->pieceData.positions) {
+                            if (position.x == xToRemove && position.y == y) {
+                                //  std::cout << "remove block at " << xToRemove << " " << y << std::endl;
+                                position = glm::vec3(-1, -1, -1);
+                            }
+                        }
+                    }
+
+                for (auto &piece: pieces)
+                    piece->stuck = false;
+
+                toRemove.clear();
+            }
+        }
+    }
+}
+
 void Piece::render(Renderer *renderer) {
-    const float halfElementDimension = ELEMENT_DIMENSION / 2.0f;
-    const glm::vec3 color = pieceData.color;
     for (auto &block: this->pieceData.positions) {
-        renderer->renderQuad(block.x * ELEMENT_DIMENSION + halfElementDimension,
-                             block.y * ELEMENT_DIMENSION + halfElementDimension,
+        renderer->renderQuad(block.x * ELEMENT_DIMENSION + ELEMENT_DIMENSION / 2.0f,
+                             block.y * ELEMENT_DIMENSION + ELEMENT_DIMENSION / 2.0f,
                              ELEMENT_DIMENSION,
-                             ELEMENT_DIMENSION, color);
+                             ELEMENT_DIMENSION, pieceData.color);
     }
 
 
     glm::vec3 origin = this->pieceData.origin;
-    renderer->renderQuad(origin.x * ELEMENT_DIMENSION + halfElementDimension,
-                         origin.y * ELEMENT_DIMENSION + halfElementDimension,
+    renderer->renderQuad(origin.x * ELEMENT_DIMENSION + ELEMENT_DIMENSION / 2.0f,
+                         origin.y * ELEMENT_DIMENSION + ELEMENT_DIMENSION / 2.0f,
                          20,
                          20, glm::vec3(0, 0, 1));
 }

@@ -9,7 +9,7 @@
 #include "../render/Renderer.h"
 #include <functional>
 
-#define ELEMENT_DIMENSION 100
+#define ELEMENT_DIMENSION 100.f
 #define PIECE_LIST std::vector<Piece*> &pieces
 
 struct PieceData {
@@ -31,6 +31,8 @@ private:
     bool canMove(glm::vec2 direction, PIECE_LIST, WindowInfo &windowInfo, bool isGravity);
 
     bool canRotate(glm::vec3 newPositions[4], PIECE_LIST, WindowInfo &windowInfo);
+
+    void cleanUp(PIECE_LIST, WindowInfo &windowInfo);
 
 public:
     Piece(WindowInfo &windowInfo, std::function<void()> &createPiece);

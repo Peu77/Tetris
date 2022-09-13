@@ -101,9 +101,9 @@ int main() {
         bool canUpdate = (tick++ % 50 == 0);
 
         for (auto &piece: pieces) {
+            piece->render(renderer);
             if (canUpdate)
                 piece->update(pieces, windowInfo);
-            piece->render(renderer);
         }
 
         renderer->drawGrid();

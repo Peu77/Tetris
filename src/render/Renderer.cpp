@@ -12,6 +12,8 @@
 Renderer::Renderer(WindowInfo *windowInfo) {
     shader = new Shader("main/");
 
+    instance = this;
+
     initQuad();
     initGrid(windowInfo);
 }
@@ -132,4 +134,8 @@ void Renderer::renderQuad(float x, float y, float width, float height, glm::vec3
     glBindVertexArray(quadData.vertexArray);
     glDrawElements(GL_TRIANGLES, quadData.indicesCount, GL_UNSIGNED_INT, 0);
     //glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
+Renderer *Renderer::getInstance() {
+    return instance;
 }

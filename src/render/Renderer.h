@@ -13,6 +13,10 @@ struct RenderData {
     int indicesCount{};
 };
 
+class Renderer;
+
+static Renderer *instance;
+
 class Renderer {
 private:
     RenderData quadData{};
@@ -25,11 +29,13 @@ private:
     void initGrid(WindowInfo *windowInfo);
 
 public:
-    Renderer(WindowInfo* windowInfo);
+    Renderer(WindowInfo *windowInfo);
 
     void updateProjection(WindowInfo *windowInfo);
 
     void drawGrid();
 
     void renderQuad(float x, float y, float width, float height, glm::vec3 color);
+
+    static Renderer *getInstance();
 };
